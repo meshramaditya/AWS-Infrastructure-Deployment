@@ -71,6 +71,123 @@ IAM → Security Groups
 - Auto Scaling
 - Fault Tolerance
 
+## Questions & Answers
+Part 1 - IAM
+- Why should the root account not be used for daily activities?
+
+The root account has full access to all AWS services and resources. If it is compromised, the entire AWS account is at risk. For security, daily work should always be done using IAM users with only the required permissions.
+
+- Difference between IAM User and IAM Role?
+
+An IAM User is created for a person who needs permanent access to AWS. It has a username and long-term credentials.
+
+An IAM Role is not attached to a specific person. It provides temporary permissions to AWS services like EC2, Lambda, or another AWS account.
+
+- Why are Groups preferred over assigning permissions directly to users?
+
+Groups make permission management much easier. Instead of assigning the same permissions to every user, permissions are assigned once to the group. Any user added to the group automatically receives those permissions.
+
+Part 2 - VPC
+- Why create a custom VPC instead of using the default VPC?
+
+A custom VPC gives complete control over networking. We can define our own IP ranges, create custom subnets, improve security, and design infrastructure similar to production environments.
+
+- Why are multiple Availability Zones used?
+
+Using multiple Availability Zones increases availability. If one Availability Zone fails, the application continues running from the other Availability Zone.
+
+- What happens if the Internet Gateway is detached?
+
+The VPC loses internet connectivity. Users cannot access the website, SSH connections stop working, and EC2 instances cannot communicate with the internet.
+
+- What happens if the default route (0.0.0.0/0) is removed?
+
+Without the default route, internet traffic cannot leave the subnet. The application becomes inaccessible from the internet.
+
+Part 3 - Security Groups
+- What is the purpose of a Security Group?
+
+A Security Group acts as a virtual firewall for EC2 instances. It controls which inbound and outbound traffic is allowed.
+
+- Difference between Security Group and NACL?
+
+Security Groups work at the instance level and are stateful, meaning return traffic is automatically allowed.
+
+Network ACLs work at the subnet level and are stateless, meaning both inbound and outbound rules must be configured.
+
+- Why should SSH not be open to the entire internet in production?
+
+Opening SSH to everyone increases the risk of unauthorized access and brute-force attacks. In production, SSH access should be restricted to trusted IP addresses.
+
+Part 4 - EC2
+- Why are the servers placed in separate Availability Zones?
+
+Placing servers in different Availability Zones improves fault tolerance. If one Availability Zone fails, the other server continues serving users.
+
+- What happens if one Availability Zone becomes unavailable?
+
+The Application Load Balancer automatically routes traffic only to the healthy EC2 instance in the remaining Availability Zone.
+
+Part 5 - EBS
+- Why does the file remain after reboot?
+
+Amazon EBS provides persistent storage. Data stored on an EBS volume remains available even after the EC2 instance is restarted.
+
+- Difference between RAM and EBS?
+
+RAM is temporary memory used while the system is running. Its contents are lost after shutdown.
+
+EBS is persistent storage that keeps data even after stopping or rebooting the EC2 instance.
+
+- What happens if the EBS volume is detached?
+
+The data remains stored on the EBS volume, but the EC2 instance can no longer access it until the volume is attached again.
+
+Part 6 - Target Group
+- What is the purpose of a Target Group?
+
+A Target Group manages the backend EC2 instances that receive traffic from the Load Balancer. It also performs health checks on those instances.
+
+- Why does a Load Balancer use Target Groups?
+
+The Load Balancer forwards requests only to healthy instances registered in the Target Group, ensuring reliable application availability.
+
+Part 7 - Application Load Balancer
+- Why is a Load Balancer required?
+
+A Load Balancer distributes incoming traffic across multiple EC2 instances. This improves availability, performance, and fault tolerance.
+
+- What happens if one EC2 instance fails?
+
+The Load Balancer detects the failure through health checks and automatically routes traffic to the remaining healthy instance.
+
+- What is the purpose of Health Checks?
+
+Health Checks continuously monitor the application running on each EC2 instance. If an instance becomes unhealthy, it is removed from receiving traffic until it recovers.
+
+Part 8 - Failure Testing
+- Why was the application still accessible?
+
+The application remained available because the Load Balancer redirected all traffic to the healthy EC2 instance.
+
+- Which AWS component handled the failure?
+
+The Application Load Balancer and the Target Group worked together. The Target Group detected the unhealthy instance through health checks, and the Load Balancer stopped sending traffic to it.
+
+Part 9 - Auto Scaling Group
+- What is Desired Capacity?
+
+Desired Capacity is the number of EC2 instances that the Auto Scaling Group tries to maintain at all times.
+
+- What is the purpose of a Launch Template?
+
+A Launch Template acts as a blueprint for creating EC2 instances. It stores the AMI, instance type, security groups, key pair, and user data.
+
+- How does Auto Scaling improve availability?
+
+Auto Scaling continuously monitors the infrastructure. If an EC2 instance fails or is terminated, it automatically launches a new instance to maintain the desired capacity, ensuring the application remains available.
+
+
 ## Failure Testing
 1. Stop EC2-1
 <img width="959" height="502" alt="Screenshot 2026-06-24 194239" src="https://github.com/user-attachments/assets/e365932b-552c-4994-b535-bd059c4b91f6" />
