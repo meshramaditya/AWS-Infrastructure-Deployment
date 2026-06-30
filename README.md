@@ -47,6 +47,7 @@ Application Load Balancer
 ↓
 Target Group
 ↓
+Auto scaling group (ASG)
 EC2 Instance
 ↓
 Nginx
